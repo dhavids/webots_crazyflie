@@ -13,6 +13,9 @@ Not tested for earlier webots version
 No dependencies are needed
 Just download and Install Webots, clone this repo, start running
 
+In Webots, select "open world" navigate to the crazyflie.wbt world file 
+If the crazyflie drone controller is not 'main', select main under controllers and run the simulation.
+
 
 ## Limitations
 Currently, there is no autonomous obstacle avoidance - if an obstacle is detected drone will stop and block
