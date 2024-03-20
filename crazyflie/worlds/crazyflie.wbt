@@ -1,0 +1,39 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/bitcraze/crazyflie/protos/Crazyflie.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/factory/containers/protos/WoodenBox.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.17181304146799717 0.1408177465009284 0.9750131491687262 1.7379206050303995
+  position 0.8599227627361486 -3.5942631395117175 1.179270013655108
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 3 3
+  floorTileSize 0.6 0.6
+}
+WoodenBox {
+  translation -0.75 0.75 0.3
+  size 0.3 0.3 0.6
+  locked TRUE
+}
+WoodenBox {
+  translation 1.05 -0.75 0.301907
+  name "wooden box(1)"
+  size 0.3 0.3 0.6
+  locked TRUE
+}
+Crazyflie {
+  translation -4.22664963096943e-06 3.943354857128561e-06 0.014941105255851484
+  rotation 0.6866597303684466 0.6968568907303797 0.2070963266982772 7.885416013341744e-06
+  controller "main"
+  supervisor TRUE
+}

@@ -1,0 +1,19 @@
+{
+    "crazyflie": {
+        
+    },
+    "default": {
+        "grid_size":10,
+        "n_agents":3,
+        "tolerance":0.08,
+        "min_tolerance":0.04,
+        "origin_offset":1.5,
+        "forward_step":0.1,
+        "base_forward":0.02,
+        "turn_step":1,
+        "timestep":64,
+        "sleep_child": 1,
+        "log_trajs":false,
+        "verbose":[false, false, false]
+    }
+}
