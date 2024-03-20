@@ -104,6 +104,7 @@ class DroneManager():
                 self.range_l, self.range_r]]
 
             """
+            TODO
             It is possible to get the properties of all other drones in the environment
             and set them at once. I did not implement this
             """
@@ -224,6 +225,7 @@ class DroneManager():
 
     def land(self):
         """
+        TODO
         Attempt to land the drone by calling this function 
 
         ! Not yet working as intended
@@ -433,6 +435,7 @@ class DroneManager():
             if self.curr_angle > target_angle: #or (self.curr_angle < 90 and target_angle > 270):
                 yaw = -yaw
             
+            # TODO
             # This is probably buggy and might be the reason turn direction is arbitrary
             # If we are in Q4, then we should go CCW to if we are going to Q1
             if self.curr_angle > 275 and target_angle < 85:

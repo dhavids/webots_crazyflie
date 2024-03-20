@@ -2,7 +2,17 @@ import numpy as np
 import math
 
 def map_positions(grid_pos, grid_size=10, continuous_range=1):
+    """
+    Map grid positions to continuous space.
 
+    Args:
+    - grid_pos (tuple): Tuple representing grid position (x, y).
+    - grid_size (int): Size of the grid.
+    - continuous_range (float): Range of continuous space.
+
+    Returns:
+    - tuple: Tuple representing continuous space coordinates.
+    """
     global grid_2_continious
 
     if not grid_2_continious:
@@ -12,7 +22,17 @@ def map_positions(grid_pos, grid_size=10, continuous_range=1):
 
 
 def map_coordinate(x, y, max_range):
-    # Scale the x and y coordinates to the range (0, max_range)
+    """
+    Scale the x and y coordinates to the range (0, max_range).
+
+    Args:
+    - x (float): X-coordinate.
+    - y (float): Y-coordinate.
+    - max_range (float): Maximum range.
+
+    Returns:
+    - tuple: Tuple of mapped x and y coordinates.
+    """
     mapped_x = (x + max_range / 2) / max_range
     mapped_y = 1.0 - (y + max_range / 2) / max_range  # Invert the y-axis to match the coordinate system
 
@@ -21,14 +41,16 @@ def map_coordinate(x, y, max_range):
 
 def compute_angle_and_displacement(p1, p2, map_points=False):
     """
-    Compute the angle and displacement between two points on the x-y plane
+    Compute the angle and displacement between two points on the x-y plane.
 
-    Args: p1 and p2 - tuples of x and y
-    
-    Returns: angles in degrees
-             displacement as float value
+    Args:
+    - p1 (tuple): Tuple representing point 1 (x, y).
+    - p2 (tuple): Tuple representing point 2 (x, y).
+    - map_points (bool): Whether to map points to continuous space.
+
+    Returns:
+    - tuple: Tuple of angle in degrees and displacement.
     """
-    
     x1, y1 = p1 if not map_points else map_coordinate(p1[0], p1[1])
     x2, y2 = p2 if not map_points else map_coordinate(p2[0], p2[1])
     
@@ -60,7 +82,6 @@ def calculate_terminal_velocity(initial_velocity, deceleration_rate, total_dista
     Returns:
     - terminal_velocity (float): Terminal velocity needed to satisfy the conditions in m/s.
     """
-
     # Calculate time to reach terminal velocity
     time_to_terminal_velocity = (initial_velocity - 0) / deceleration_rate
 
@@ -81,13 +102,13 @@ def compute_terminal_velocity(u, d, t, dt):
     Compute the terminal velocity required for a vehicle to decelerate to cover distance d in time t.
 
     Parameters:
-    - u: Initial velocity (m/s).
-    - d: Total distance to cover (m).
-    - t: Total time available for deceleration and constant speed (s).
-    - dt: Deceleration rate (m/s^2).
+    - u (float): Initial velocity (m/s).
+    - d (float): Total distance to cover (m).
+    - t (float): Total time available for deceleration and constant speed (s).
+    - dt (float): Deceleration rate (m/s^2).
 
     Returns:
-    - v: Terminal velocity required for deceleration (m/s).
+    - v_terminal (float): Terminal velocity required for deceleration (m/s).
     """
     # Calculate the time to decelerate to an arbitrary terminal velocity d/t
     t_decel = (d/t - u) / dt
@@ -98,19 +119,19 @@ def compute_terminal_velocity(u, d, t, dt):
 
     return v_terminal
 
-# Compute terminal velocity when accelerating from rest
+
 def compute_terminal_velocity_acceleration(d, t, dt):
     """
     Compute the terminal velocity required for a vehicle to accelerate to a given final velocity
     while covering distance d in time t.
 
     Parameters:
-    - d: Total distance to cover (m).
-    - t: Total time available for acceleration and constant speed (s).
-    - dt: Acceleration rate (m/s^2).
+    - d (float): Total distance to cover (m).
+    - t (float): Total time available for acceleration and constant speed (s).
+    - dt (float): Acceleration rate (m/s^2).
 
     Returns:
-    - v_terminal: Terminal velocity required for acceleration (m/s).
+    - v_terminal (float): Terminal velocity required for acceleration (m/s).
     """
     # Calculate distance covered during acceleration
     s_acceleration = 0.5 * dt * t**2
@@ -124,65 +145,17 @@ def compute_terminal_velocity_acceleration(d, t, dt):
     return v_terminal
 
 
-def generate_path(agent_pos, old_cont_pos, new_cont_pos, tolerance=0.01, steps=10, step_size=0.01):
-    
-    # If agent is not in old grid_pos, navigate there first
-    if not_within_range(
-        agent_pos[0], old_cont_pos[0]-tolerance, old_cont_pos[0]+tolerance) or \
-        not_within_range(
-        agent_pos[1], old_cont_pos[1]-tolerance, old_cont_pos[1]+tolerance):
-        generate_path(agent_pos, agent_pos, old_cont_pos)
-    
-    movements = generate_random_points(old_cont_pos, new_cont_pos, steps, step_size, origin_offset=0.5)
-
-    return movements
-
-'''
-def generate_random_points(old_cont_pos, new_cont_pos, steps, step_size, origin_offset=0.5):
-    # Determine the unit vector between the two points
-    total_distance = math.dist(old_cont_pos, new_cont_pos)
-    unit_vector = np.array([(new_cont_pos[0] - old_cont_pos[0]) / total_distance, 
-                            (new_cont_pos[1] - old_cont_pos[1]) / total_distance])
-    
-    # Generate n random points
-    points = []
-    for _ in range(steps):
-        # Calculate the step distance based on the step size
-        step_distance = step_size * np.random.uniform()
-        
-        # Calculate the coordinates of the point at the step distance along the line segment
-        point_x = old_cont_pos + unit_vector[0] * step_distance
-        point_y = old_cont_pos + unit_vector[1] * step_distance
-        
-        # Clip the coordinates to ensure they are within the range [-0.5, 0.5]
-        point_x = np.clip(point_x, -origin_offset, origin_offset)
-        point_y = np.clip(point_y, -origin_offset, origin_offset)
-        
-        # Add the point to the list of points
-        points.append((point_x, point_y))
-    
-    return points
-#'''
-
-def generate_random_points(old_cont_pos, new_cont_pos, steps, step_size, origin_offset=0.5):
-    # Generate n random points
-    points = []
-    for _ in range(steps):
-        # Generate random coordinates within the bounding box defined by old_cont_pos and new_cont_pos
-        random_x = np.random.uniform(min(old_cont_pos[0], new_cont_pos[0]), max(old_cont_pos[0], new_cont_pos[0]))
-        random_y = np.random.uniform(min(old_cont_pos[1], new_cont_pos[1]), max(old_cont_pos[1], new_cont_pos[1]))
-        
-        # Clip the coordinates to ensure they are within the range [-0.5, 0.5]
-        random_x = np.clip(random_x, -origin_offset, origin_offset)
-        random_y = np.clip(random_y, -origin_offset, origin_offset)
-        
-        # Add the point to the list of points
-        points.append((random_x, random_y))
-    
-    return points
-
-
 def grid_to_continuous_mapping(grid_size=10, continuous_range=1.0):
+    """
+    Map grid positions to continuous space.
+
+    Args:
+    - grid_size (int): Size of the grid.
+    - continuous_range (float): Range of continuous space.
+
+    Returns:
+    - ndarray: Numpy array representing continuous space mapping.
+    """
     mapping = np.zeros((grid_size, grid_size, 2))  # Initialize a numpy array to store mappings
     
     # Calculate the cell size in the continuous environment
@@ -233,8 +206,17 @@ def not_within_range(value, lower_bound, upper_bound):
 
 
 def index_of_equal_value(t1, t2):
+    """
+    Find the index of the first equal value in two tuples.
+
+    Args:
+    - t1 (tuple): First tuple.
+    - t2 (tuple): Second tuple.
+
+    Returns:
+    - int or None: Index of the first equal value, or None if no equal values are found.
+    """
     # Check if the tuples have the same length
-    #print("t1: ", t1, "t2: ", t2)
     if len(t1) != len(t2):
         return None  # Return None if the tuples have different lengths
 
@@ -276,8 +258,89 @@ def angle_to_positive(n):
     """
     return (360 + (n % 360)) % 360
 
+def pickle_file(fname, file, base_path="", verbose=False):
+    """
+    Pickle a file and save it to the specified location.
+
+    Args:
+    - fname (str): The filename.
+    - file: The file object to pickle.
+    - base_path (str): The base path to save the file.
+    - verbose (bool): Whether to print verbose messages.
+
+    Returns:
+    - None
+    """
+    import pickle
+    import os
+
+    if base_path != "":
+        if os.path.isdir(base_path):
+            pass
+        else:
+            os.mkdir(base_path)
+
+    save_name = str(fname)
+    save_path = os.path.join(base_path, save_name)
+    
+    with open(save_path, 'wb') as fp:
+        pickle.dump(file, fp)
+    
+    if verbose:
+        print(f'File {fname} pickled and saved at {save_path}')
+
+
+def unpickle_file(fname, verbose=False):
+    """
+    Unpickle a file and load it into memory.
+
+    Args:
+    - fname (str): The filename.
+    - verbose (bool): Whether to print verbose messages.
+
+    Returns:
+    - file: The unpickled file object.
+    """
+    import pickle
+    import os 
+
+    if os.path.isfile(fname):
+        with open(fname, 'rb') as fp:
+            file = pickle.load(fp) 
+        if verbose:
+            print("File loaded")         
+        return file
+    
+    else:
+        print('File not found or something else')
+        return None
+
+
+def recursive_update(dict1, dict2):
+    """
+    Recursively update a dictionary with another dictionary.
+
+    Args:
+    - dict1 (dict): The dictionary to update.
+    - dict2 (dict): The dictionary to update from.
+
+    Returns:
+    - dict: The updated dictionary.
+    """
+    for key, value in dict2.items():
+        if isinstance(value, dict):
+            # Recursively update nested dictionaries
+            dict1[key] = recursive_update(dict1.get(key, {}), value)
+        else:
+            # Update non-dictionary values
+            dict1[key] = value
+    return dict1
+
 
 class pid_velocity_fixed_height_controller():
+    """
+    PID controller for crazyflie drones - copied from wallfollowing example
+    """
     def __init__(self):
         self.past_vx_error = 0.0
         self.past_vy_error = 0.0
@@ -336,46 +399,3 @@ class pid_velocity_fixed_height_controller():
         m4 = np.clip(m4, 0, 600)
 
         return [m1, m2, m3, m4]
-    
-
-def pickle_file(fname, file, base_path="", verbose=False):
-
-    import pickle, os
-    if base_path != "":
-        if os.path.isdir(base_path):
-            pass
-        else:
-            os.mkdir(base_path)
-
-    save_name= str(fname) #+ '-pickle'
-    save_path= os.path.join(base_path, save_name)
-    with open(save_path, 'wb') as fp:
-                pickle.dump(file, fp)
-    if verbose: print(f'file {fname} pickled and saved at {save_path}')
-
-
-
-def unpickle_file(fname, file = None, verbose=False):
-    
-    import pickle, os 
-    if os.path.isfile(fname):
-        with open(fname, 'rb') as fp:
-            file= pickle.load(fp) 
-        if verbose: print("File loaded")         
-        return file
-    
-    else:
-        print('File not found or something else')
-    return None
-
-
-# Recusively update a dict from another dict
-def recursive_update(dict1, dict2):
-    for key, value in dict2.items():
-        if isinstance(value, dict):
-            # Recursively update nested dictionaries
-            dict1[key] = recursive_update(dict1.get(key, {}), value)
-        else:
-            # Update non-dictionary values
-            dict1[key] = value
-    return dict1
