@@ -486,7 +486,7 @@ class DroneManager():
                 
                 if self.verbose:
                     print('+++++')
-                    print("\nAgent ID: ", self.drone_id, "Curr angle: ", 
+                    print("\Drone ID: ", self.drone_id, "Curr angle: ", 
                           self.curr_angle, "Target angle: ", self.target_angle, 
                           "Ref angle: ", self.ref_angle)
                     print("Bottom angle: ", bottom_angle, "Top angle: ", top_angle)
